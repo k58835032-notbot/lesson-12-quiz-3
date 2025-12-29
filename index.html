@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japanese Punctuation Quiz</title>
+
+<style>
+body{
+  font-family:"Hiragino Kaku Gothic Pro","Meiryo",sans-serif;
+  background:#fff;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:40px;
+}
+h1{color:#b23b3b;}
+
+#quiz-container{
+  background:#fff;
+  border-radius:15px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+  padding:30px;
+  width:90%;
+  max-width:650px;
+  text-align:center;
+}
+
+.sentence{
+  font-size:2em;
+  margin-bottom:20px;
+  line-height:1.6;
+}
+
+.word{
+  display:inline-block;
+  text-align:center;
+  margin:0 6px;
+}
+
+.word .meaning{
+  display:block;
+  font-size:.45em;
+  color:#777;
+}
+
+.blank{
+  font-weight:bold;
+  font-size:1.2em;
+}
+
+.option{
+  display:block;
+  background:#ffeaea;
+  border:none;
+  border-radius:10px;
+  padding:12px;
+  font-size:1.1em;
+  width:100%;
+  max-width:320px;
+  margin:10px auto;
+  cursor:pointer;
+}
+.option:hover{background:#f7b6b6;}
+
+#next{
+  display:none;
+  margin-top:20px;
+  background:#b23b3b;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  padding:10px 20px;
+  cursor:pointer;
+}
+
+#message{margin-top:10px;font-size:1.2em;}
+#q-num{margin-bottom:10px;color:#666;}
+</style>
+</head>
+
+<body>
+<h1>Japanese Punctuation Quiz</h1>
+
+<div id="quiz-container">
+  <div id="q-num"></div>
+  <div class="sentence" id="sentence"></div>
+  <div id="options"></div>
+  <div id="message"></div>
+  <button id="next">Next</button>
+</div>
+
+<script>
+const questions = [
+  { sentence:[["たなかさんは","Tanaka"],["＿",""],["こんにちは","hello"],["＿",""],["と いいました。","said"]], options:["「 」","『 』"], correct:"「 」" },
+  { sentence:[["かれは","He"],["＿",""],["だいじょうぶ","I'm fine"],["＿",""],["と いいました。","said"]], options:["「 」","『 』"], correct:"「 」" },
+  { sentence:[["きょうは","Today"],["＿",""],["さむいです。","it's cold"]], options:["、","。"], correct:"、" },
+  { sentence:[["ぱん","Bread"],["、",""],["ぎゅうにゅう","Milk"],["を"," "],["かいました","bought"], ["__"," "]], options:["、","。"], correct:"。" },
+   { sentence:[["わたしは","I"],["＿",""],["きのう","yesterday"],["ともだち","friend"],["と えいがを みました。","watched a movie"]], options:["、","。"], correct:"、" },
+  { sentence:[["これは","This"],["＿",""],["たいせつ","important"],["＿",""],["な ことです。","thing"]], options:["「 」","『 』"], correct:"「 」" },
+   {  sentence: [
+      ["せんせいは","Teacher"],
+      ["＿",""],
+      ["あした てすと が あります","There is a test tomorrow"],
+      ["＿",""],
+      ["と いいました。","said"]
+    ],
+    options: ["「 」","『 』"],
+    correct: "「 」"
+  },
+
+  {
+    sentence: [
+      ["わたしは","I"],
+      ["＿",""],
+      ["もう かえりたい","I want to go home already"],
+      ["＿",""],
+      ["と おもいました。","thought"]
+    ],
+    options: ["「 」","『 』"],
+    correct: "「 」"
+  },
+
+  {
+    sentence: [
+      ["たろうは","Taro"],
+      ["はなこに","to Hanako"],
+      ["＿",""],
+      ["げんき？","How are you?"],
+      ["＿",""],
+      ["と ききました。","asked"]
+    ],
+    options: ["「 」","『 』"],
+    correct: "「 」"
+  },
+
+  {
+    sentence: [
+      ["はは　は","Mother"],
+      ["＿",""],
+      ["きょう　は あめ　が ふりそうだ　ね","Looks like it is going to rain today"],
+      ["＿",""],
+      ["と いって","said"],
+      ["、",""],
+      ["まど　を しめました。","closed the window"]
+    ],
+    options: ["「 」","『 』"],
+    correct: "「 」"
+  },
+
+  {
+    sentence: [
+      ["かれは","He"],
+      ["＿",""],
+      ["ぜったい　に あきらめない","I will never give up"],
+      ["＿",""],
+      ["と",""],
+      ["こころ　の なか　で","in his heart"],
+      ["きめました。","decided"]
+    ],
+    options: ["「 」","『 』"],
+    correct: "「 」"
+  },
+  
+  {
+    sentence: [
+      ["かれは","He"],
+      ["「",""],
+      ["こころの なかで","in his heart"],
+      ["＿",""],
+      ["ぜったいに あきらめない","I will never give up"],
+      ["＿",""],
+      ["と かんがえた","thought"],
+      ["」",""],
+      ["と いいました。","said"]
+    ],
+    options: ["「 」", "『 』"],
+    correct: "『 』"
+  },
+  
+    {
+    sentence: [
+      ["わたしは","I"],
+      ["「",""],
+      ["＿",""],
+      ["もう かえりたい","I want to go home"],
+      ["＿",""],
+      ["と おもった","thought"],
+      ["」",""],
+      ["と",""],
+      ["にっきに かきました。","wrote in my diary"]
+    ],
+    options: ["「 」", "『 』"],
+    correct: "『 』"
+  },
+
+  {
+    sentence: [
+      ["みせ　の まえ　に","In front of the shop"],
+      ["＿",""],
+      ["ほんじつ きゅうぎょう","Closed today"],
+      ["＿",""],
+      ["という","that says"],
+      ["かみ　が はって ありました。","a paper was posted"]
+    ],
+    options: ["「 」","『 』"],
+    correct: "「 」"
+  },
+
+  {
+    sentence: [
+      ["ともだち　は","My friend"],
+      ["＿",""],
+      ["やった！ ごうかくした　よ","Yay! I passed!"],
+      ["＿",""],
+      ["と",""],
+      ["おおごえで","loudly"],
+      ["いいました。","said"]
+    ],
+    options: ["「 」","『 』"],
+    correct: "「 」"
+  },
+
+  {
+    sentence: [
+      ["わたしは","I"],
+      ["せんせい　に","to the teacher"],
+      ["＿",""],
+      ["この かんじ　は どう よみます　か","How do you read this kanji?"],
+      ["＿",""],
+      ["と",""],
+      ["しつもん　しました。","asked"]
+    ],
+    options: ["「 」","『 』"],
+    correct: "「 」"
+  },
+  
+  
+{
+  sentence: [
+    ["かれ","He"],
+    ["「",""],
+    ["きのう","yesterday"],
+    ["＿",""],
+    ["あきらめない","Never Give Up"],
+    ["＿",""],
+    ["という ほん","book titled"],
+    ["を よんでいた","was reading"],
+    ["」",""],
+    ["と いいました。","said"]
+  ],
+  options: ["「 」", "『 』"],
+  correct: "『 』"
+},
+  
+  {
+  sentence: [
+    ["あした","Tomorrow"],
+       ["＿",""],
+    ["さかな","Sakana"],
+       ["＿",""],
+    ["という ばんど","band called"],
+    ["が えんそうする。","will perform"]
+  ],
+  options: ["「 」", "『 』"],
+  correct: "『 』"
+},
+  
+{
+  sentence: [
+    ["きのう","Yesterday"],
+    ["、","　"],
+       ["＿",""],
+    ["すたあるか","Stalker"],
+       ["＿",""],
+    ["という げえむ","game called"],
+    ["を していた。","was playing"]
+  ],
+  options: ["「 」", "『 』"],
+  correct: "『 』"
+},
+  
+{
+  sentence: [
+    ["ともだちは","My friend"],
+    ["＿",""],
+    ["いっしょに、えいがを みにいこう","Let's go see a movie together"],
+    ["＿",""],
+    ["と ていあん した。","proposed"]
+  ],
+  options: ["「 」", "『 』"],
+  correct: "「 」"
+},
+
+  {
+  sentence: [
+    ["ともだちは","My friend"],
+    ["「",""],               // This blank is now *after "いっしょに"*
+    ["いっしょに","together"],
+       ["＿",""],
+    ["えいがを みにいこう","Let's go see a movie"],
+    ["」",""],
+    ["と ていあん した。","proposed"]
+  ],
+  options: ["、","。"],        // Learner chooses if comma goes here
+  correct: "、"
+},
+
+  {
+    sentence: [
+      ["わたしの いぬは","My dog"],
+      ["＿",""],
+      ["おおきくて","big and"],
+      ["＿",""],
+      ["かわいい　です。","cute"]
+    ],
+    options: ["、","。"],
+    correct: "、"
+  },
+  {
+    sentence: [
+      ["せんせいは","The teacher"],
+      ["＿",""],
+      ["じゅぎょうの あとに","after class"],
+      ["＿",""],
+      ["しつもんを うけつけました。","accepted questions"]
+    ],
+    options: ["、","。"],
+    correct: "、"
+  },
+  {
+    sentence: [
+      ["きょうは","Today"],
+      ["＿",""],
+      ["あつくて", "hot"],
+      ["＿",""],
+      ["むしあついので","and humid, so"],
+      ["＿",""],
+      ["みずを たくさん のまなければ なりません。","we must drink a lot of water"]
+    ],
+    options: ["、","゜"],
+    correct: "、"
+  },
+  {
+    sentence: [
+      ["きのうは","Yesterday"],
+      ["＿",""],
+      ["あめが ふっていたので","it rained, so"],
+      ["＿",""],
+      ["さんぽに いけなかった。","couldn't go for a walk"]
+    ],
+    options: ["、",","],
+    correct: "、"
+  }
+
+
+];
+
+let i = 0;
+
+const sEl = document.getElementById("sentence");
+const oEl = document.getElementById("options");
+const mEl = document.getElementById("message");
+const nEl = document.getElementById("next");
+const qNum = document.getElementById("q-num");
+
+function render(){
+  sEl.innerHTML="";
+  oEl.innerHTML="";
+  mEl.textContent="";
+  nEl.style.display="none";
+  qNum.textContent = `Question ${i+1} / ${questions.length}`;
+
+  questions[i].sentence.forEach(w=>{
+    const span=document.createElement("span");
+    span.className="word";
+    span.innerHTML=`<span class="meaning">${w[1]}</span>
+                   <span class="${w[0]==='＿'?'blank':''}">${w[0]}</span>`;
+    sEl.appendChild(span);
+  });
+
+  questions[i].options.forEach(opt=>{
+    const b=document.createElement("button");
+    b.className="option";
+    b.textContent=opt;
+    b.onclick=()=>check(opt);
+    oEl.appendChild(b);
+  });
+}
+
+function check(choice){
+  document.querySelectorAll(".option").forEach(b=>b.disabled=true);
+  if(choice===questions[i].correct){
+    mEl.textContent="✅ Correct!";
+  }else{
+    mEl.textContent=`❌ Correct answer: ${questions[i].correct}`;
+  }
+  nEl.style.display="inline-block";
+}
+
+nEl.onclick=()=>{
+  i++;
+  if(i<questions.length){
+    render();
+  }else{
+    // End screen with GIF
+    sEl.innerHTML=`
+      <h2>🎉 You did it! 😺✨</h2>
+      <img src="https://raw.githubusercontent.com/k58835032-notbot/lesson-12-quiz-2/main/tumblr_nw6rdeAO5i1twn3nro1_500.gif" alt="Celebration GIF" style="margin-top:20px;width:250px;">
+    `;
+    oEl.innerHTML="";
+    qNum.textContent="";
+    mEl.textContent="Great job! Keep practicing 💪";
+    nEl.style.display="none";
+  }
+};
+
+render();
+</script>
+</body>
+</html>
